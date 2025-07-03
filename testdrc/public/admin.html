@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Tambah Produk</title></head>
+<body>
+  <h2>Tambah Produk</h2>
+  <form method="POST" action="/admin/add" enctype="multipart/form-data">
+    <input name="name" required placeholder="Nama Produk"><br>
+    <input name="price" required placeholder="Harga"><br>
+    <textarea name="description" placeholder="Deskripsi"></textarea><br>
+    <input type="file" name="image" required><br>
+    <button type="submit">Tambah</button>
+  </form>
+</body>
+</html>

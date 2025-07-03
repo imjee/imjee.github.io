@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Riwayat Pesanan</title></head>
+<body>
+  <h2>Pesanan Masuk</h2>
+  <select id="filter" onchange="loadOrders()">
+    <option value="all">Semua</option>
+    <option value="pending">Pending</option>
+    <option value="shipped">Terkirim</option>
+  </select>
+  <div id="orders-list"></div>
+  <script src="admin-orders.js"></script>
+</body>
+</html>
