@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>DRC RACING VICTORY</title>
@@ -8,13 +8,21 @@
 <body>
   <header>
     <h1>🏁 DRC RACING VICTORY</h1>
-    <div id="cart">
+    <input type="text" id="search-input" placeholder="Cari produk..." onkeyup="filterProducts()" />
+    <div id="cart" onclick="openCart()">
       🛒 <span id="cart-count">0</span>
     </div>
   </header>
 
-  <main id="product-list">
-    <!-- Produk akan ditampilkan di sini -->
+  <nav id="category-menu">
+    <button onclick="filterByCategory('all')">Semua</button>
+    <button onclick="filterByCategory('Velg')">Velg</button>
+    <button onclick="filterByCategory('Knalpot')">Knalpot</button>
+    <button onclick="filterByCategory('Shockbreaker')">Shockbreaker</button>
+  </nav>
+
+  <main id="product-list" class="container">
+    <!-- Produk ditampilkan oleh script.js -->
   </main>
 
   <div id="cart-popup" class="hidden">
@@ -24,6 +32,15 @@
     <button onclick="checkout()">Checkout</button>
     <button onclick="closeCart()">Tutup</button>
   </div>
+
+  <footer>
+    <h2>Hubungi Kami</h2>
+    <form id="contact-form" onsubmit="submitForm(event)">
+      <input type="text" id="nama" placeholder="Nama Anda" required />
+      <input type="text" id="produk" placeholder="Produk yang ingin dipesan" required />
+      <button type="submit">Pesan via WhatsApp</button>
+    </form>
+  </footer>
 
   <script src="script.js"></script>
 </body>
