@@ -1,10 +1,32 @@
 const products = [
-  { id: 1, name: "Velg Racing", price: 350000 },
-  { id: 2, name: "Knalpot Racing", price: 450000 },
-  { id: 3, name: "Shockbreaker", price: 550000 }
+  {
+    id: 1,
+    name: "Velg Racing Hitam",
+    price: 350000,
+    desc: "Velg racing warna hitam, cocok untuk motor sport.",
+    category: "Velg",
+    image: "https://via.placeholder.com/200?text=Velg+Hitam"
+  },
+  {
+    id: 2,
+    name: "Knalpot Racing Full System",
+    price: 450000,
+    desc: "Knalpot stainless dengan suara garang.",
+    category: "Knalpot",
+    image: "https://via.placeholder.com/200?text=Knalpot"
+  },
+  {
+    id: 3,
+    name: "Shockbreaker Tabung",
+    price: 550000,
+    desc: "Shockbreaker nyaman untuk touring dan harian.",
+    category: "Shockbreaker",
+    image: "https://via.placeholder.com/200?text=Shockbreaker"
+  }
 ];
 
 let cart = [];
+let currentCategory = "all";
 
 function formatRupiah(amount) {
   return amount.toLocaleString('id-ID');
@@ -12,16 +34,25 @@ function formatRupiah(amount) {
 
 function renderProducts() {
   const list = document.getElementById("product-list");
-  products.forEach(product => {
-    const div = document.createElement("div");
-    div.className = "product";
-    div.innerHTML = `
-      <h3>${product.name}</h3>
-      <p>Rp ${formatRupiah(product.price)}</p>
-      <button onclick="addToCart(${product.id})">Tambah ke Keranjang</button>
-    `;
-    list.appendChild(div);
-  });
+  list.innerHTML = "";
+  const search = document.getElementById("search-input").value.toLowerCase();
+  products
+    .filter(p =>
+      (currentCategory === "all" || p.category === currentCategory) &&
+      (p.name.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search))
+    )
+    .forEach(product => {
+      const div = document.createElement("div");
+      div.className = "product";
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>${product.desc}</p>
+        <p class="price">Rp ${formatRupiah(product.price)}</p>
+        <button onclick="addToCart(${product.id})">Tambah ke Keranjang</button>
+      `;
+      list.appendChild(div);
+    });
 }
 
 function addToCart(id) {
@@ -62,5 +93,21 @@ function checkout() {
   closeCart();
 }
 
-document.getElementById("cart").addEventListener("click", openCart);
-renderProducts();
+function filterByCategory(cat) {
+  currentCategory = cat;
+  renderProducts();
+}
+
+function filterProducts() {
+  renderProducts();
+}
+
+function submitForm(e) {
+  e.preventDefault();
+  const nama = document.getElementById("nama").value;
+  const produk = document.getElementById("produk").value;
+  const pesan = `Halo, saya ${nama} ingin memesan produk: ${produk}`;
+  window.open(`https://wa.me/6287776696070?text=${encodeURIComponent(pesan)}`, "_blank");
+}
+
+document.addEventListener("DOMContentLoaded", renderProducts);
