@@ -1,42 +1,104 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  padding: 0;
+  background-color: #fff;
+  color: #333;
 }
 
 header {
-  background: #222;
+  background: #b30000;
   color: white;
-  padding: 10px 20px;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-#product-list {
-  display: flex;
   flex-wrap: wrap;
-  padding: 20px;
-  gap: 20px;
 }
 
-.product {
-  border: 1px solid #ccc;
-  padding: 15px;
+#search-input {
+  padding: 7px;
   width: 200px;
-  text-align: center;
-}
-
-button {
-  background: #333;
-  color: white;
-  padding: 8px 12px;
+  margin: 10px;
+  border-radius: 4px;
   border: none;
-  cursor: pointer;
 }
 
 #cart {
   cursor: pointer;
+  font-weight: bold;
+}
+
+#category-menu {
+  text-align: center;
+  margin: 10px;
+}
+
+#category-menu button {
+  margin: 5px;
+  padding: 8px 12px;
+  background-color: #b30000;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 30px;
+  gap: 20px;
+}
+
+.product {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 230px;
+  background: #fff;
+  padding: 15px;
+  text-align: center;
+  transition: 0.2s ease-in-out;
+}
+
+.product:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.product img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.product h3 {
+  margin: 10px 0 5px;
+  color: #b30000;
+}
+
+.product p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.product .price {
+  font-weight: bold;
+  color: #b30000;
+  margin-top: 8px;
+}
+
+button {
+  background: #b30000;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #990000;
 }
 
 #cart-popup {
@@ -44,11 +106,32 @@ button {
   top: 20%;
   right: 20px;
   background: #fff;
-  border: 1px solid #444;
+  border: 1px solid #b30000;
   padding: 20px;
   z-index: 1000;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .hidden {
   display: none;
+}
+
+footer {
+  background-color: #f4f4f4;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+footer form {
+  margin-top: 10px;
+}
+
+footer input {
+  padding: 10px;
+  margin: 5px;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
