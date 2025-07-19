@@ -1,49 +1,70 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Some1Special</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>some1special 💖</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="lockscreen" class="screen">
-    <div class="clock">09:41</div>
-    <div class="slide-to-unlock">Geser untuk membuka ➡️</div>
+
+  <!-- Background -->
+  <div class="background"></div>
+
+  <!-- Input Name -->
+  <div id="start-screen" class="screen">
+    <h2>Halo kamu yang spesial 💫</h2>
+    <input type="text" id="username-input" placeholder="Masukkan nama kamu..." />
+    <button onclick="saveName()">Mulai</button>
   </div>
 
+  <!-- Lockscreen -->
+  <div id="lockscreen" class="screen hidden">
+    <div class="lock-time">09:41</div>
+    <div class="lock-name" id="lock-name">Teman Spesial</div>
+    <div class="swipe" onclick="unlock()">▶️ Geser untuk membuka</div>
+  </div>
+
+  <!-- Homescreen -->
   <div id="homescreen" class="screen hidden">
     <div class="app-grid">
-      <div class="app-icon" onclick="openApp('messages')">📩<span>Messages</span></div>
-      <div class="app-icon" onclick="openApp('gallery')">🖼️<span>Gallery</span></div>
-      <div class="app-icon" onclick="openApp('settings')">⚙️<span>Settings</span></div>
-      <div class="app-icon" onclick="openApp('song')">🎵<span>Song</span></div>
-      <div class="app-icon" onclick="openApp('movie')">🎬<span>Movie</span></div>
-      <div class="app-icon" onclick="openApp('sendlove')">💌<span>Send Love</span></div>
+      <div class="icon" onclick="openApp('messages')">
+        <img src="assets/icons/messages.png" />
+        <p>Messages</p>
+      </div>
+      <div class="icon" onclick="openApp('gallery')">
+        <img src="assets/icons/gallery.png" />
+        <p>Gallery</p>
+      </div>
+      <div class="icon" onclick="openApp('song')">
+        <img src="assets/icons/music.png" />
+        <p>Song</p>
+      </div>
+      <div class="icon" onclick="openApp('movie')">
+        <img src="assets/icons/movie.png" />
+        <p>Movie</p>
+      </div>
+      <div class="icon" onclick="openApp('settings')">
+        <img src="assets/icons/settings.png" />
+        <p>Settings</p>
+      </div>
+      <div class="icon" onclick="window.open('https://instagram.com/jeesssiixx', '_blank')">
+        <img src="assets/icons/love.png" />
+        <p>Send Love</p>
+      </div>
     </div>
   </div>
 
+  <!-- App View -->
   <div id="app-view" class="screen hidden">
     <div class="app-header">
-      <button onclick="goBack()">← Back</button>
       <span id="app-title">App</span>
+      <button class="back-btn" onclick="goBack()">🔙</button>
     </div>
-    <div id="app-content"></div>
+    <div id="app-content" class="app-body"></div>
   </div>
 
-  <audio id="music" src="assets/audio/song.mp3" preload="auto"></audio>
-
+  <!-- Script include -->
   <script src="app.js"></script>
-
-<div class="gallery-viewer hidden" id="galleryViewer">
-  <div class="gallery-image-container">
-    <img id="galleryImage" src="" alt="Gallery Image">
-    <div id="galleryCaption">✨ Setiap momen bersamamu adalah indah ✨</div>
-  </div>
-  <button id="prevBtn">←</button>
-  <button id="nextBtn">→</button>
-  <button onclick="closeGallery()" class="closeBtn">✖️</button>
-</div>
 </body>
 </html>
