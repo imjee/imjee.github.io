@@ -1,0 +1,13 @@
+
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', sans-serif;
+  background: url('assets/images/bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+}
+input, button {
+  padding: 10px;
+  font-size: 16px;
+}
