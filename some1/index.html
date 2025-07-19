@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Some1Special</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="lockscreen" class="screen">
+    <div class="clock">09:41</div>
+    <div class="slide-to-unlock">Geser untuk membuka ➡️</div>
+  </div>
+
+  <div id="homescreen" class="screen hidden">
+    <div class="app-grid">
+      <div class="app-icon" onclick="openApp('messages')">📩<span>Messages</span></div>
+      <div class="app-icon" onclick="openApp('gallery')">🖼️<span>Gallery</span></div>
+      <div class="app-icon" onclick="openApp('settings')">⚙️<span>Settings</span></div>
+      <div class="app-icon" onclick="openApp('song')">🎵<span>Song</span></div>
+      <div class="app-icon" onclick="openApp('movie')">🎬<span>Movie</span></div>
+      <div class="app-icon" onclick="openApp('sendlove')">💌<span>Send Love</span></div>
+    </div>
+  </div>
+
+  <div id="app-view" class="screen hidden">
+    <div class="app-header">
+      <button onclick="goBack()">← Back</button>
+      <span id="app-title">App</span>
+    </div>
+    <div id="app-content"></div>
+  </div>
+
+  <audio id="music" src="assets/audio/song.mp3" preload="auto"></audio>
+
+  <script src="app.js"></script>
+
+<div class="gallery-viewer hidden" id="galleryViewer">
+  <div class="gallery-image-container">
+    <img id="galleryImage" src="" alt="Gallery Image">
+    <div id="galleryCaption">✨ Setiap momen bersamamu adalah indah ✨</div>
+  </div>
+  <button id="prevBtn">←</button>
+  <button id="nextBtn">→</button>
+  <button onclick="closeGallery()" class="closeBtn">✖️</button>
+</div>
+</body>
+</html>
