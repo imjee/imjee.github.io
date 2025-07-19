@@ -7,7 +7,75 @@ body {
   color: white;
   text-align: center;
 }
-input, button {
-  padding: 10px;
-  font-size: 16px;
+.screen {
+  display: none;
+  padding: 2em;
 }
+.screen:not(.hidden) {
+  display: block;
+}
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+.app-icon {
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 1em;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+.app-icon span {
+  display: block;
+  margin-top: 0.5em;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5em;
+}
+.thumb {
+  width: 100%;
+  border-radius: 10px;
+}
+.poster {
+  width: 80%;
+  border-radius: 20px;
+}
+
+.gallery-viewer {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.gallery-image-container {
+  max-width: 90%;
+  max-height: 80%;
+  position: relative;
+}
+#galleryImage {
+  max-width: 100%;
+  border-radius: 20px;
+}
+#galleryCaption {
+  color: #fff;
+  margin-top: 1em;
+  font-style: italic;
+}
+.closeBtn, #prevBtn, #nextBtn {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: none;
+  font-size: 1.5em;
+  padding: 0.5em 1em;
+  position: absolute;
+}
+#prevBtn { left: 10px; top: 50%; transform: translateY(-50%); }
+#nextBtn { right: 10px; top: 50%; transform: translateY(-50%); }
+.closeBtn { top: 10px; right: 10px; }
