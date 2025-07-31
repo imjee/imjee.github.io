@@ -1,245 +1,76 @@
-:root {
-    --merah: #e63946;
-    --putih: #fff;
-    --hitam: #222;
-    --shadow: 0 4px 18px #0003;
-}
+/* ... (semua CSS sebelumnya tetap, tambahkan di bawah ini atau di akhir file) */
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    background: var(--hitam);
-    color: var(--putih);
-    min-height: 100vh;
+/* Floating Contact Tab */
+.contact-tab {
+    position: fixed;
+    right: 24px;
+    bottom: 28px;
+    z-index: 99;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
 }
-
-header {
-    background: linear-gradient(90deg, var(--merah) 0 20%, var(--hitam) 80% 100%);
-    padding: 26px 0 20px 0;
-    text-align: center;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow);
-    position: relative;
-}
-
-h1 {
-    font-weight: bold;
-    margin: 0;
-    font-size: 2.5em;
-    letter-spacing: 2px;
-}
-.red { color: var(--merah); }
-.white { color: var(--putih); }
-.admin-link {
-    position: absolute;
-    right: 32px;
-    top: 38px;
-    background: var(--hitam);
-    color: var(--putih);
-    border: 2px solid var(--merah);
-    border-radius: 8px;
-    padding: 8px 20px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: background 0.2s, color 0.2s;
-}
-.admin-link:hover {
+.contact-icon-btn {
     background: var(--merah);
     color: var(--putih);
-}
-
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#barang-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
-    justify-content: center;
-    width: 100%;
-    max-width: 1250px;
-    margin-bottom: 30px;
-}
-.barang-card {
-    background: var(--putih);
-    color: var(--hitam);
-    border-radius: 16px;
-    width: 280px;
-    box-shadow: var(--shadow);
-    padding: 20px 16px 18px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    border-top: 6px solid var(--merah);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-}
-.barang-card:hover {
-    transform: translateY(-7px) scale(1.025);
-    box-shadow: 0 8px 32px #e6394680, var(--shadow);
-}
-.barang-card img {
-    max-width: 190px;
-    max-height: 140px;
-    border-radius: 8px;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 12px #e6394630;
-    transition: filter 0.2s;
-}
-.barang-card h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.15em;
-    color: var(--merah);
-    font-weight: 700;
-}
-.barang-card .harga {
-    font-weight: bold;
-    color: var(--hitam);
-    background: #fff3f3;
-    padding: 3px 12px;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    border: 1.5px solid var(--merah);
-}
-.barang-card p {
-    margin: 0 0 13px 0;
-    font-size: 0.98em;
-    color: #333;
-    min-height: 46px;
-}
-.beli-btn {
-    background: var(--merah);
-    color: var(--putih);
-    padding: 8px 28px;
     border: none;
-    border-radius: 8px;
-    font-size: 1.12em;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: 600;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 8px #e6394633;
-    transition: background 0.2s, transform 0.1s;
-    margin-top: 6px;
-}
-.beli-btn:hover {
-    background: #b3001b;
-    transform: scale(1.05);
-}
-
-form {
-    max-width: 400px;
-    background: #fff;
-    color: #222;
-    padding: 28px 28px 18px 28px;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    border-top: 6px solid var(--merah);
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    box-shadow: 0 4px 16px #e6394622;
     display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 24px;
-}
-form label {
-    font-weight: 600;
-    color: #b3001b;
-    margin-bottom: 2px;
-}
-form input, form textarea {
-    width: 100%;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    padding: 8px 6px;
-    font-size: 1em;
-    border: 1.5px solid #d5d5d5;
-    border-radius: 6px;
-    box-sizing: border-box;
-    background: #fff;
-    color: #222;
-    font-family: inherit;
-    transition: border 0.2s;
-}
-form input:focus, form textarea:focus {
-    border: 1.5px solid var(--merah);
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.16s;
     outline: none;
 }
-form button[type="submit"] {
-    background: var(--merah);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 9px 0;
-    font-size: 1.1em;
-    font-weight: 700;
-    margin-top: 10px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: background 0.2s, transform 0.1s;
-}
-form button[type="submit"]:hover {
+.contact-icon-btn:hover {
     background: #b3001b;
-    transform: scale(1.04);
+    transform: scale(1.09);
 }
-#success-message {
-    color: var(--merah);
-    font-weight: 600;
-    margin-top: 15px;
-    opacity: 0;
-    transition: opacity 0.5s;
-}
-#success-message.show {
-    opacity: 1;
-}
-
-.preview-area {
-    background: #fff;
-    color: #222;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    border-top: 6px solid var(--merah);
-    margin-top: 16px;
-    padding: 16px 0 16px 0;
-    width: 350px;
+.contact-social-list {
     display: flex;
     flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+    align-items: flex-end;
+}
+.contact-social-list a {
+    background: var(--putih);
+    color: var(--hitam);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
     align-items: center;
-    animation: fadeIn 0.5s;
+    justify-content: center;
+    font-size: 1.5em;
+    box-shadow: 0 2px 8px #e639462c;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
 }
-.preview-area h2 {
-    color: var(--merah);
-    margin-bottom: 12px;
-    margin-top: 2px;
+.contact-social-list a:hover {
+    background: var(--merah);
+    color: var(--putih);
 }
-.barang-card.preview {
-    background: #f8f8f8;
-    border: 2px dashed var(--merah);
-    opacity: 0.92;
-    box-shadow: none;
-    margin-bottom: 0;
-    margin-top: 0;
-}
-
-footer {
-    width: 100%;
-    text-align: center;
+.contact-label {
     background: var(--hitam);
-    padding: 18px 0 15px 0;
-    color: #fff;
-    letter-spacing: 1px;
-    font-size: 1em;
-    border-top: 2.5px solid var(--merah);
-    margin-top: auto;
+    color: var(--putih);
+    border-radius: 7px;
+    font-size: 0.92em;
+    font-weight: 500;
+    margin-right: 12px;
+    padding: 3px 15px;
+    margin-bottom: 3px;
+    box-shadow: 0 2px 8px #e6394633;
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(18px);}
-    to { opacity: 1; transform: translateY(0);}
+@media (max-width: 600px) {
+    .contact-tab {
+        right: 10px;
+        bottom: 10px;
+    }
+    .contact-label { font-size: 0.87em; padding: 2px 12px;}
 }
