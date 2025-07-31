@@ -14,6 +14,23 @@ let ballY = canvas.height / 2 - ballSize / 2;
 let ballSpeedX = 6 * (Math.random() > 0.5 ? 1 : -1);
 let ballSpeedY = 4 * (Math.random() * 2 - 1);
 
+let playerScore = 0;
+let aiScore = 0;
+
+// Sound effects (base64 encoded short beep and "death" sound)
+// You can replace these with your own .wav or .mp3 files or URLs
+const beepPaddle = new Audio("data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YYQAAAB/AAD/AAD/AAD/AAD/AA==");
+const beepDead = new Audio("data:audio/wav;base64,UklGRjAAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVgAAAB/AAB/AAD/AAD/AAH/AAD/AAb/AAD/AA==");
+
+function playPaddleSound() {
+    beepPaddle.currentTime = 0;
+    beepPaddle.play();
+}
+function playDeadSound() {
+    beepDead.currentTime = 0;
+    beepDead.play();
+}
+
 function resetBall() {
     ballX = canvas.width / 2 - ballSize / 2;
     ballY = canvas.height / 2 - ballSize / 2;
@@ -42,6 +59,13 @@ function draw() {
     ctx.beginPath();
     ctx.arc(ballX + ballSize/2, ballY + ballSize/2, ballSize/2, 0, Math.PI * 2);
     ctx.fill();
+
+    // Draw scores
+    ctx.font = "48px monospace";
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "center";
+    ctx.fillText(playerScore, canvas.width / 2 - 60, 60);
+    ctx.fillText(aiScore, canvas.width / 2 + 60, 60);
 }
 
 // Update game logic
@@ -54,6 +78,7 @@ function update() {
     if (ballY <= 0 || ballY + ballSize >= canvas.height) {
         ballSpeedY *= -1;
         ballY = Math.max(0, Math.min(ballY, canvas.height-ballSize));
+        playPaddleSound();
     }
 
     // Ball collision with player paddle
@@ -66,6 +91,7 @@ function update() {
         // Add some "spin"
         ballSpeedY += (ballY + ballSize/2 - (playerY + paddleHeight/2)) * 0.15;
         ballX = playerX + paddleWidth;
+        playPaddleSound();
     }
 
     // Ball collision with AI paddle
@@ -78,10 +104,19 @@ function update() {
         // Add some "spin"
         ballSpeedY += (ballY + ballSize/2 - (aiY + paddleHeight/2)) * 0.15;
         ballX = aiX - ballSize;
+        playPaddleSound();
     }
 
     // Score check (ball out of bounds)
-    if (ballX < 0 || ballX > canvas.width) {
+    if (ballX < 0) {
+        // AI scores
+        aiScore++;
+        playDeadSound();
+        resetBall();
+    } else if (ballX > canvas.width) {
+        // Player scores
+        playerScore++;
+        playDeadSound();
         resetBall();
     }
 
