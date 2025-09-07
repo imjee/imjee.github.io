@@ -3,32 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Slot Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Savanna Spin Slot</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <h1>💎 Gemini Olympus Slot 💎</h1>
+        <header>
+            <h1>🦁 Savanna Spin Slot 🦓</h1>
+            <div class="status-bar">
+                <div id="free-spins-display" class="status-box" style="display: none;">
+                    Free Spins: <span id="free-spins-count">0</span>
+                </div>
+                <div class="status-box">
+                    Saldo: <span id="balance">10000.00</span>
+                </div>
+            </div>
+        </header>
         
-        <div id="slot-grid" class="slot-grid">
+        <div id="slot-grid-container">
+            <div id="slot-grid"></div>
+            <div id="total-win-splash" class="hidden">
+                <span>Total Kemenangan</span>
+                <span id="total-win-amount">0</span>
             </div>
-
-        <div id="result-message" class="result-message">
-            Selamat datang! Atur taruhan dan putar!
         </div>
 
-        <div class="controls">
-            <div class="balance-display">
-                <span>Saldo:</span>
-                <span id="balance">1000.00</span>
+        <footer>
+            <div class="controls">
+                <div class="bet-controls">
+                    <button id="decrease-bet" class="btn-bet">-</button>
+                    <input type="text" id="bet-amount" value="100" readonly>
+                    <button id="increase-bet" class="btn-bet">+</button>
+                </div>
+                <button id="spin-button" class="btn-spin">SPIN</button>
+                <button id="buy-fs-button" class="btn-buy">
+                    Beli Free Spins
+                    <span id="buy-fs-cost">10000</span>
+                </button>
             </div>
-            <div class="bet-controls">
-                <button id="decrease-bet">-</button>
-                <input type="text" id="bet-amount" value="10" readonly>
-                <button id="increase-bet">+</button>
-            </div>
-            <button id="spin-button">SPIN</button>
-        </div>
+        </footer>
     </div>
 
     <script src="script.js"></script>
