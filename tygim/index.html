@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Slot Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+        <h1>💎 Gemini Olympus Slot 💎</h1>
+        
+        <div id="slot-grid" class="slot-grid">
+            </div>
+
+        <div id="result-message" class="result-message">
+            Selamat datang! Atur taruhan dan putar!
+        </div>
+
+        <div class="controls">
+            <div class="balance-display">
+                <span>Saldo:</span>
+                <span id="balance">1000.00</span>
+            </div>
+            <div class="bet-controls">
+                <button id="decrease-bet">-</button>
+                <input type="text" id="bet-amount" value="10" readonly>
+                <button id="increase-bet">+</button>
+            </div>
+            <button id="spin-button">SPIN</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
