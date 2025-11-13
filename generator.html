@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Poster (Puter.js Edition)</title>
+    <title>AI Poster (Puter.js Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://js.puter.com/v2/"></script>
@@ -22,9 +22,9 @@
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
-                Poster Generator <span class="text-white text-2xl font-normal">by Puter.js</span>
+                Poster Generator <span class="text-white text-2xl font-normal">via Puter.js</span>
             </h1>
-            <p class="text-gray-400">Gratis Tanpa API Key Pribadi! (Login Puter Sekali Saja)</p>
+            <p class="text-gray-400">Solusi Gratis & Unlimited (Login Puter saat diminta)</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -77,8 +77,8 @@
     </div>
 
     <script>
-        let uploadedImageFile = null;   // File asli untuk diupload ke Puter
-        let uploadedImageElement = null; // Gambar untuk digambar di Canvas
+        let uploadedImageFile = null;   
+        let uploadedImageElement = null;
         let aiSuggestedStyle = "abstract-gradient-purple"; 
 
         const imageInput = document.getElementById('imageInput');
@@ -91,7 +91,7 @@
         const finalResult = document.getElementById('finalResult');
         const downloadLink = document.getElementById('downloadLink');
 
-        // --- Draw Functions (Sama seperti sebelumnya) ---
+        // --- Draw Functions ---
         const drawBackground = {
             'abstract-gradient-purple': (ctx) => {
                 const gradient = ctx.createLinearGradient(0, 0, 800, 800);
@@ -125,7 +125,7 @@
         imageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                uploadedImageFile = file; // Simpan file mentah untuk Puter
+                uploadedImageFile = file; 
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     previewImage.src = e.target.result;
@@ -138,7 +138,7 @@
             }
         });
 
-        // 2. Logika Puter.js (Gantikan Gemini SDK)
+        // 2. Logika Puter.js 
         askAiBtn.addEventListener('click', async () => {
             if (!uploadedImageFile) {
                 alert("Upload foto dulu!");
@@ -146,17 +146,17 @@
             }
 
             const originalText = askAiBtn.innerHTML;
-            askAiBtn.innerHTML = `<div class="loader mr-2"></div> Upload & Analisa (Login jika diminta)...`;
+            askAiBtn.innerHTML = `<div class="loader mr-2"></div> Upload & Analisa (Cek Popup Login)...`;
             askAiBtn.disabled = true;
 
             try {
-                // Langkah A: Upload gambar ke Cloud Puter sementara agar bisa dibaca AI
-                // Nama file diacak agar unik
-                const fileName = `temp_img_${Date.now()}.jpg`;
-                const puterFile = await puter.write(fileName, uploadedImageFile);
+                // --- PERBAIKAN UTAMA DISINI ---
+                // Menggunakan 'puter.fs.write' bukan 'puter.write'
+                const fileName = `temp_${Date.now()}.jpg`;
+                // Upload ke Puter Cloud Storage (Gratis)
+                const puterFile = await puter.fs.write(fileName, uploadedImageFile);
                 
-                // Langkah B: Panggil Chat AI dengan gambar
-                // Kita pakai 'gpt-4o-mini' atau 'gemini-flash' (Puter support multi model)
+                // Minta Chat AI menganalisa gambar yang sudah diupload
                 const promptText = `
                     Lihat gambar produk ini. Bertindaklah sebagai copywriter ahli.
                     Berikan saya 3 baris teks untuk poster iklan (Bahasa Indonesia):
@@ -168,21 +168,19 @@
                     Hanya berikan output teks mentah baris per baris tanpa markdown.
                 `;
 
-                // Format pesan untuk Puter.js (Multimodal)
+                // Kirim Prompt + Gambar ke Model GPT-4o-mini via Puter
                 const response = await puter.chat([
                     {
                         role: "user",
                         content: [
                             { type: "text", text: promptText },
-                            { type: "image_url", image_url: { url: puterFile.readName } } // Atau pake url publik jika ada
+                            { type: "image_url", image_url: { url: puterFile.readName } } 
                         ]
-                    },
-                    // Alternatif sintaks Puter v2 untuk file lokal yg sudah diupload:
-                    // { type: "file", puter_path: puterFile.path }
-                ], { model: 'gpt-4o-mini' }); // GPT-4o-mini sangat cepat & bagus untuk vision
+                    }
+                ], { model: 'gpt-4o-mini' });
 
-                // Langkah C: Bersihkan output
-                const fullText = response?.message?.content || response.toString(); // Handle variasi respon
+                // Proses Output Text
+                const fullText = response?.message?.content || response.toString(); 
                 
                 const lines = fullText.split('\n');
                 let textContent = [];
@@ -199,19 +197,20 @@
                 textInput.value = textContent.join('\n');
                 backgroundStyleSelect.value = aiSuggestedStyle;
 
-                // Hapus file temp di cloud agar bersih (opsional)
-                // await puter.delete(fileName);
+                // Bersihkan file sampah (opsional, agar storage puter tidak penuh)
+                await puter.fs.delete(fileName);
 
             } catch (error) {
                 console.error(error);
-                alert("Terjadi Error: " + error.message + "\n\nPastikan Anda sudah mengizinkan popup Login dari Puter.com!");
+                // Pesan error yang lebih ramah
+                alert("Error: " + error.message + "\n\nPENTING: Jika ini pertama kali, pastikan POPUP LOGIN Puter.com tidak terblokir oleh browser HP Anda.");
             } finally {
                 askAiBtn.innerHTML = originalText;
                 askAiBtn.disabled = false;
             }
         });
 
-        // 3. Render Poster (Sama seperti sebelumnya)
+        // 3. Render Poster
         generateBtn.addEventListener('click', () => {
             if (!uploadedImageElement) { alert("Belum ada foto!"); return; }
 
@@ -222,11 +221,9 @@
             let selectedStyle = backgroundStyleSelect.value;
             if (selectedStyle === "gemini-suggested") selectedStyle = aiSuggestedStyle;
             
-            // Draw BG
             if (drawBackground[selectedStyle]) drawBackground[selectedStyle](ctx);
             else drawBackground['abstract-gradient-purple'](ctx);
 
-            // Draw Image
             const scale = Math.min(450 / uploadedImageElement.width, 450 / uploadedImageElement.height);
             const w = uploadedImageElement.width * scale;
             const h = uploadedImageElement.height * scale;
@@ -237,7 +234,6 @@
             ctx.drawImage(uploadedImageElement, x, y, w, h);
             ctx.shadowBlur = 0;
 
-            // Draw Text
             ctx.textAlign = 'center';
             
             if (textLines[0]) {
