@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Gold Digger: TNT & Shop Update</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        h1 { margin-bottom: 5px; font-size: 24px; }
+        canvas {
+            border: 4px solid #ecf0f1;
+            background-color: #3e2723;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        /* UI HUD */
+        #ui {
+            margin-top: 10px;
+            font-size: 18px;
+            display: flex;
+            gap: 15px;
+        }
+        .info-box {
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #7f8c8d;
+        }
+
+        /* SHOP MODAL */
+        #shop-modal {
+            display: none; /* Tersembunyi default */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #34495e;
+            padding: 20px;
+            border: 4px solid #f1c40f;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        .shop-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .shop-btn:hover { background: #2ecc71; }
+        .shop-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .controls { font-size: 12px; opacity: 0.8; margin-top: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>⛏️ Gold Digger Pro</h1>
+    
+    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    
+    <div id="ui">
+        <div class="info-box">💰 Emas: <span id="score">0</span></div>
+        <div class="info-box">🔋 Energi: <span id="energy">100</span></div>
+        <div class="info-box">🧨 TNT: <span id="tnt">1</span></div>
+    </div>
+
+    <div class="controls">
+        ⬆️⬇️⬅️➡️ Bergerak | <strong>SPASI</strong> Ledakkan Batu | <strong>'B'</strong> Buka Toko
+    </div>
+
+    <div id="shop-modal">
+        <h2 style="color: #f1c40f; margin-top:0;">🛒 TOKO PENAMBANG</h2>
+        <p>Poin Emas Kamu: <span id="shop-score">0</span></p>
+        <hr>
+        <button class="shop-btn" onclick="buyItem('energy')">🍔 Makan Siang (+30 Energi) <br><small>Biaya: 100 Emas</small></button>
+        <button class="shop-btn" onclick="buyItem('tnt')">🧨 Beli Dinamit (+1 TNT) <br><small>Biaya: 200 Emas</small></button>
+        <hr>
+        <button class="shop-btn" style="background: #c0392b;" onclick="toggleShop()">❌ Tutup Toko ('B')</button>
+    </div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Elemen UI
+    const scoreEl = document.getElementById('score');
+    const energyEl = document.getElementById('energy');
+    const tntEl = document.getElementById('tnt');
+    const shopModal = document.getElementById('shop-modal');
+    const shopScoreEl = document.getElementById('shop-score');
+
+    // --- KONFIGURASI GAME ---
+    const TILE_SIZE = 40;
+    const COLS = 15;
+    const ROWS = 15;
+    
+    const EMPTY = 0;
+    const DIRT = 1;
+    const GOLD = 2;
+    const ROCK = 3;
+
+    // Status Game
+    let player = { x: 7, y: 0 }; 
+    let score = 0;
+    let energy = 100;
+    let tnt = 1; // Mulai dengan 1 TNT gratis
+    let gameMap = [];
+    let isShopOpen = false;
+
+    // --- INISIALISASI ---
+    function init() {
+        for (let r = 0; r < ROWS; r++) {
+            let row = [];
+            for (let c = 0; c < COLS; c++) {
+                if (r === 0 && c === 7) {
+                    row.push(EMPTY);
+                } else {
+                    let rand = Math.random();
+                    if (rand < 0.15) row.push(ROCK);      // 15% Batu (Lebih banyak)
+                    else if (rand < 0.35) row.push(GOLD); // 20% Emas
+                    else row.push(DIRT);
+                }
+            }
+            gameMap.push(row);
+        }
+        updateUI();
+        draw();
+    }
+
+    // --- RENDER ---
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                let type = gameMap[r][c];
+                let x = c * TILE_SIZE;
+                let y = r * TILE_SIZE;
+
+                if (type === DIRT) {
+                    ctx.fillStyle = '#795548';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.strokeStyle = '#5D4037';
+                    ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+                } else if (type === GOLD) {
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#FFF';
+                    ctx.font = "20px Arial";
+                    ctx.fillText("✨", x+5, y+30);
+                } else if (type === ROCK) {
+                    ctx.fillStyle = '#546E7A';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#37474F'; 
+                    ctx.fillRect(x+5, y+5, 25, 25);
+                }
+            }
+        }
+
+        // Gambar Pemain
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        // Helm
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(player.x * TILE_SIZE, player.y * TILE_SIZE, TILE_SIZE, 12);
+        // Mata
+        ctx.fillStyle = 'black';
+        ctx.fillRect(player.x * TILE_SIZE + 10, player.y * TILE_SIZE + 15, 5, 5);
+        ctx.fillRect(player.x * TILE_SIZE + 25, player.y * TILE_SIZE + 15, 5, 5);
+    }
+
+    // --- LOGIKA SHOP ---
+    function toggleShop() {
+        isShopOpen = !isShopOpen;
+        shopModal.style.display = isShopOpen ? 'block' : 'none';
+        shopScoreEl.innerText = score;
+    }
+
+    function buyItem(item) {
+        if (item === 'energy') {
+            if (score >= 100) {
+                score -= 100;
+                energy += 30;
+                alert("Energi ditambahkan!");
+            } else {
+                alert("Emas tidak cukup!");
+            }
+        } else if (item === 'tnt') {
+            if (score >= 200) {
+                score -= 200;
+                tnt += 1;
+                alert("TNT dibeli!");
+            } else {
+                alert("Emas tidak cukup!");
+            }
+        }
+        updateUI();
+    }
+
+    // --- LOGIKA TNT ---
+    function useTNT() {
+        if (tnt <= 0) {
+            alert("Kamu tidak punya TNT! Beli di toko ('B').");
+            return;
+        }
+
+        let destroyed = false;
+        // Cek tetangga: Atas, Bawah, Kiri, Kanan
+        const directions = [
+            {dx: 0, dy: -1}, {dx: 0, dy: 1},
+            {dx: -1, dy: 0}, {dx: 1, dy: 0}
+        ];
+
+        directions.forEach(dir => {
+            let nx = player.x + dir.dx;
+            let ny = player.y + dir.dy;
+
+            // Pastikan dalam batas map
+            if (nx >= 0 && nx < COLS && ny >= 0 && ny < ROWS) {
+                if (gameMap[ny][nx] === ROCK) {
+                    gameMap[ny][nx] = EMPTY; // Hancurkan batu
+                    destroyed = true;
+                    
+                    // Efek visual sederhana (Flash putih)
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(nx * TILE_SIZE, ny * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+            }
+        });
+
+        if (destroyed) {
+            tnt--;
+            updateUI();
+            draw();
+            setTimeout(draw, 100); // Redraw map setelah ledakan
+        } else {
+            // Opsional: Tidak mengurangi TNT jika tidak ada batu
+            console.log("Tidak ada batu di dekatmu!");
+        }
+    }
+
+    function updateUI() {
+        scoreEl.innerText = score;
+        energyEl.innerText = energy;
+        tntEl.innerText = tnt;
+        shopScoreEl.innerText = score;
+    }
+
+    // --- INPUT USER ---
+    document.addEventListener('keydown', (e) => {
+        // Toggle Toko
+        if (e.key.toLowerCase() === 'b') {
+            toggleShop();
+            return;
+        }
+
+        // Jika toko buka atau game over, hentikan gerakan
+        if (isShopOpen || energy <= 0) return;
+
+        // Gunakan TNT
+        if (e.code === 'Space') {
+            useTNT();
+            return;
+        }
+
+        // Gerakan
+        let nextX = player.x;
+        let nextY = player.y;
+
+        if (e.key === 'ArrowUp') nextY--;
+        if (e.key === 'ArrowDown') nextY++;
+        if (e.key === 'ArrowLeft') nextX--;
+        if (e.key === 'ArrowRight') nextX++;
+
+        // Logika Gerak
+        if (nextX >= 0 && nextX < COLS && nextY >= 0 && nextY < ROWS) {
+            let targetBlock = gameMap[nextY][nextX];
+
+            if (targetBlock === ROCK) {
+                // Tidak bisa lewat
+            } else {
+                player.x = nextX;
+                player.y = nextY;
+                energy--; // Kurangi energi
+                
+                if (targetBlock === GOLD) {
+                    score += 50;
+                    energy += 2; 
+                    gameMap[nextY][nextX] = EMPTY;
+                } else if (targetBlock === DIRT) {
+                    gameMap[nextY][nextX] = EMPTY;
+                }
+
+                updateUI();
+                draw();
+                
+                if (energy <= 0) {
+                    setTimeout(() => alert("💀 Game Over! Energi Habis."), 10);
+                }
+            }
+        }
+    });
+
+    init();
+
+</script>
+</body>
+</html>
