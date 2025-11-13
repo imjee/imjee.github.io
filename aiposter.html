@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Poster Generator (Auto-Login)</title>
+    <title>AI Poster Generator (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -27,17 +27,17 @@
 
     <div class="max-w-7xl mx-auto">
         <div class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
-                Poster Generator + Gemini
+            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-500 mb-2">
+                Poster Generator V2
             </h1>
-            <p class="text-gray-400">API Key sudah terpasang. Silakan langsung upload foto!</p>
+            <p class="text-gray-400">Versi Perbaikan: Menggunakan Model Flash Terbaru</p>
         </div>
 
         <div class="max-w-2xl mx-auto mb-8">
             <div class="bg-gray-800 border border-green-500/50 p-4 rounded-xl flex gap-3 items-center shadow-[0_0_15px_rgba(34,197,94,0.2)]">
                 <i class="fas fa-check-circle text-green-400"></i>
                 <input type="password" id="apiKeyInput" value="AIzaSyBkX9ZxkCzE5SJBe_7KRIsFeiZnBkTLyaA" class="bg-transparent w-full text-sm focus:outline-none text-gray-400" readonly>
-                <span class="text-xs text-green-400 font-bold whitespace-nowrap">Terhubung</span>
+                <span class="text-xs text-green-400 font-bold whitespace-nowrap">Connected</span>
             </div>
         </div>
 
@@ -57,12 +57,24 @@
                 </div>
 
                 <button id="askGeminiBtn" class="w-full py-3 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-xl font-semibold text-blue-300 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <i class="fas fa-robot"></i> Buatkan Caption Otomatis
+                    <i class="fas fa-robot"></i> Minta Gemini Tulis Caption
                 </button>
 
                 <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700 relative">
-                    <label class="block text-sm font-medium text-gray-300 mb-3">3. Teks Poster</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">3. Teks Poster (Edit jika perlu)</label>
                     <textarea id="textInput" class="w-full h-32 bg-gray-700/50 border border-gray-600 rounded-xl p-4 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none" placeholder="Hasil dari Gemini akan muncul di sini..."></textarea>
+                </div>
+
+                 <div class="bg-gray-800 p-5 rounded-2xl border border-gray-700">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">4. Gaya Background</label>
+                    <select id="backgroundStyle" class="w-full bg-gray-700/50 border border-gray-600 rounded-xl p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                        <option value="gemini-suggested">Rekomendasi Gemini</option>
+                        <option value="abstract-gradient-purple">Gradien Abstrak (Ungu-Pink)</option>
+                        <option value="geometric-blue">Pola Geometris (Biru)</option>
+                        <option value="minimal-soft-yellow">Minimalis Lembut (Kuning)</option>
+                        <option value="dynamic-lines-green">Garis Dinamis (Hijau)</option>
+                        <option value="dark-modern">Dark Modern</option>
+                    </select>
                 </div>
 
                 <button id="generateBtn" class="w-full py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-xl font-bold text-lg shadow-lg hover:shadow-purple-500/50 hover:scale-[1.02] transition transform">
@@ -84,16 +96,73 @@
 
         let uploadedFileBase64 = null;
         let uploadedImageElement = null;
+        let geminiSuggestedStyle = "abstract-gradient-purple"; 
 
         const imageInput = document.getElementById('imageInput');
         const previewImage = document.getElementById('previewImage');
         const uploadPlaceholder = document.getElementById('uploadPlaceholder');
         const askGeminiBtn = document.getElementById('askGeminiBtn');
         const textInput = document.getElementById('textInput');
+        const backgroundStyleSelect = document.getElementById('backgroundStyle');
         const generateBtn = document.getElementById('generateBtn');
         const finalResult = document.getElementById('finalResult');
         const downloadLink = document.getElementById('downloadLink');
         const apiKeyInput = document.getElementById('apiKeyInput');
+
+        // --- Background Drawing Styles ---
+        const drawBackground = {
+            'abstract-gradient-purple': (ctx) => {
+                const gradient = ctx.createLinearGradient(0, 0, 800, 800);
+                gradient.addColorStop(0, '#4c1d95');
+                gradient.addColorStop(1, '#db2777');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 800, 800);
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                ctx.beginPath(); ctx.arc(700, 100, 200, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(100, 700, 250, 0, Math.PI*2); ctx.fill();
+            },
+            'geometric-blue': (ctx) => {
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, 0, 800, 800);
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 20; i++) {
+                    ctx.beginPath(); ctx.moveTo(0, i * 40); ctx.lineTo(800, (i * 40) - 200); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(i * 40, 0); ctx.lineTo((i * 40) - 200, 800); ctx.stroke();
+                }
+            },
+            'minimal-soft-yellow': (ctx) => {
+                ctx.fillStyle = '#fffbeb';
+                ctx.fillRect(0, 0, 800, 800);
+                ctx.fillStyle = 'rgba(252, 211, 77, 0.3)';
+                ctx.beginPath(); ctx.arc(650, 150, 180, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.rect(100, 600, 250, 150); ctx.fill();
+            },
+            'dynamic-lines-green': (ctx) => {
+                ctx.fillStyle = '#064e3b';
+                ctx.fillRect(0, 0, 800, 800);
+                ctx.strokeStyle = 'rgba(110, 231, 183, 0.5)';
+                ctx.lineWidth = 3;
+                for (let i = 0; i < 50; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random() * 800, Math.random() * 800);
+                    ctx.lineTo(Math.random() * 800, Math.random() * 800);
+                    ctx.stroke();
+                }
+            },
+            'dark-modern': (ctx) => {
+                const gradient = ctx.createRadialGradient(400, 400, 0, 400, 400, 800);
+                gradient.addColorStop(0, '#111827');
+                gradient.addColorStop(1, '#0f172a');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 800, 800);
+                ctx.strokeStyle = 'rgba(100, 100, 100, 0.2)';
+                ctx.lineWidth = 1;
+                for(let i=0; i < 10; i++) {
+                    ctx.beginPath(); ctx.arc(400, 400, 100 + i * 50, 0, Math.PI * 2); ctx.stroke();
+                }
+            }
+        };
 
         imageInput.addEventListener('change', async (event) => {
             const file = event.target.files[0];
@@ -112,27 +181,29 @@
         });
 
         askGeminiBtn.addEventListener('click', async () => {
-            const apiKey = apiKeyInput.value.trim(); // Mengambil key yang sudah di-hardcode
+            const apiKey = apiKeyInput.value.trim();
             if (!uploadedFileBase64) {
                 alert("Upload foto produk dulu!");
                 return;
             }
 
             const originalBtnText = askGeminiBtn.innerHTML;
-            askGeminiBtn.innerHTML = `<div class="loader mr-2"></div> Sedang menganalisa foto...`;
+            askGeminiBtn.innerHTML = `<div class="loader mr-2"></div> Gemini sedang berpikir...`;
             askGeminiBtn.disabled = true;
 
             try {
                 const genAI = new GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                // PERBAIKAN DISINI: Menggunakan 'gemini-1.5-flash-latest'
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
                 const prompt = `
                     Lihat gambar produk ini. 
-                    Buatkan 3 baris teks poster yang sangat menarik (Hard Selling) dalam Bahasa Indonesia:
-                    Baris 1: Headline utama (maks 4 kata, kapital semua, meyakinkan).
-                    Baris 2: Promo/Harga (contoh: "DISKON 50%" atau "HANYA 100RB").
-                    Baris 3: Kata ajakan (contoh: "ORDER SEKARANG").
-                    Hanya berikan teks mentahnya saja per baris.
+                    Berikan rekomendasi 3 baris teks poster (hard selling, Bahasa Indonesia) DAN rekomendasi gaya background visual yang cocok.
+                    Format output (tanpa markdown):
+                    HEADLINE_TEKS
+                    PROMO_TEKS
+                    CALL_TO_ACTION_TEKS
+                    BACKGROUND_STYLE: [pilih salah satu: abstract-gradient-purple, geometric-blue, minimal-soft-yellow, dynamic-lines-green, dark-modern]
                 `;
 
                 const imagePart = {
@@ -141,11 +212,30 @@
 
                 const result = await model.generateContent([prompt, imagePart]);
                 const response = await result.response;
-                textInput.value = response.text().trim();
+                const fullText = response.text().trim();
+
+                const lines = fullText.split('\n');
+                let textContent = [];
+                let backgroundStyle = "abstract-gradient-purple"; 
+
+                for (const line of lines) {
+                    if (line.includes("BACKGROUND_STYLE:")) {
+                        const styleValue = line.split(":")[1].trim();
+                        if (drawBackground[styleValue]) { 
+                            backgroundStyle = styleValue;
+                        }
+                    } else {
+                        if(line.trim() !== "") textContent.push(line.trim());
+                    }
+                }
+                
+                textInput.value = textContent.join('\n');
+                geminiSuggestedStyle = backgroundStyle; 
+                backgroundStyleSelect.value = geminiSuggestedStyle; 
 
             } catch (error) {
                 console.error(error);
-                alert("Error: " + error.message + "\nCek kuota API Key atau koneksi internet.");
+                alert("Error Gemini: " + error.message + "\n\nJika masih error, coba refresh halaman.");
             } finally {
                 askGeminiBtn.innerHTML = originalBtnText;
                 askGeminiBtn.disabled = false;
@@ -161,21 +251,18 @@
             const canvas = document.getElementById('posterCanvas');
             const ctx = canvas.getContext('2d');
             const textLines = textInput.value.split('\n').filter(line => line.trim() !== '');
+            
+            let selectedStyle = backgroundStyleSelect.value;
+            if (selectedStyle === "gemini-suggested") {
+                selectedStyle = geminiSuggestedStyle;
+            }
 
-            // Background
-            const gradient = ctx.createLinearGradient(0, 0, 800, 800);
-            gradient.addColorStop(0, '#1e1b4b'); 
-            gradient.addColorStop(1, '#4c1d95'); 
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 800, 800);
-
-            // Decoration Circles
-            ctx.fillStyle = '#fbbf24'; 
-            ctx.globalAlpha = 0.1;
-            ctx.beginPath(); ctx.arc(750, 50, 300, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#db2777'; 
-            ctx.beginPath(); ctx.arc(50, 750, 350, 0, Math.PI*2); ctx.fill();
-            ctx.globalAlpha = 1.0;
+            // Draw Background
+            if (drawBackground[selectedStyle]) {
+                drawBackground[selectedStyle](ctx);
+            } else {
+                drawBackground['abstract-gradient-purple'](ctx);
+            }
 
             // Product Image
             const scale = Math.min(450 / uploadedImageElement.width, 450 / uploadedImageElement.height);
@@ -191,25 +278,32 @@
             // Text Rendering
             ctx.textAlign = 'center';
             
+            // Line 1
             if (textLines[0]) {
                 ctx.font = '900 60px Inter, sans-serif';
                 ctx.fillStyle = 'white';
                 ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 10;
+                if(selectedStyle === 'minimal-soft-yellow') ctx.fillStyle = '#1e293b';
                 ctx.fillText(textLines[0].replace(/\*/g, '').toUpperCase(), 400, 120);
             }
             
+            // Line 2
             if (textLines[1]) {
                 ctx.font = '800 50px Inter, sans-serif';
-                ctx.fillStyle = '#facc15';
+                ctx.fillStyle = '#facc15'; 
+                if(selectedStyle === 'minimal-soft-yellow') ctx.fillStyle = '#b45309';
                 ctx.shadowBlur = 0;
                 ctx.fillText(textLines[1].replace(/\*/g, ''), 400, 650);
             }
 
+            // Line 3
             if (textLines[2]) {
                 ctx.fillStyle = 'white';
+                if(selectedStyle === 'minimal-soft-yellow') ctx.fillStyle = '#1e293b';
                 roundRect(ctx, 250, 700, 300, 70, 35);
                 ctx.fill();
                 ctx.fillStyle = '#4c1d95';
+                if(selectedStyle === 'minimal-soft-yellow') ctx.fillStyle = 'white';
                 ctx.font = 'bold 30px Inter, sans-serif';
                 ctx.fillText(textLines[2].replace(/\*/g, '').toUpperCase(), 400, 745);
             }
