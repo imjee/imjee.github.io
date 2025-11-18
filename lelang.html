@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FishMarket - Jual Beli & Lelang</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🌊 FishMarket</h1>
+        <p>Pusat Jual Beli Item Digital & Lelang Langka</p>
+    </header>
+
+    <div class="container">
+        <section id="auction-section">
+            <h2>🔥 Sedang Dilelang!</h2>
+            <div class="auction-card">
+                <div class="item-icon" id="auction-img"></div>
+                <h3 id="auction-name">Loading...</h3>
+                <p class="timer">Sisa Waktu: <span id="timer">00:00</span></p>
+                
+                <div class="bid-info">
+                    <p>Penawar Tertinggi: <strong id="highest-bidder">-</strong></p>
+                    <p>Harga Saat Ini: <span class="price" id="current-price">Rp 0</span></p>
+                </div>
+
+                <div class="bid-controls">
+                    <input type="number" id="bid-input" placeholder="Masukkan tawaran...">
+                    <button onclick="placeBid()">Tawar Sekarang (Bid)</button>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="market-section">
+            <h2>🛒 Item Tersedia (Direct Buy)</h2>
+            <div class="items-grid" id="items-list">
+                </div>
+        </section>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        let currentAuctionPrice = 0;
+
+        // 1. Menerima data awal saat loading
+        socket.on('init_data', (data) => {
+            renderItems(data.items);
+            updateAuctionUI(data.auction);
+        });
+
+        // 2. Update tampilan jika ada yang nge-Bid
+        socket.on('update_auction', (auctionData) => {
+            updateAuctionUI(auctionData);
+            alert(`Tawaran baru masuk: Rp ${auctionData.currentBid.toLocaleString()}`);
+        });
+
+        // Fungsi Render Toko Biasa
+        function renderItems(items) {
+            const container = document.getElementById('items-list');
+            container.innerHTML = '';
+            items.forEach(item => {
+                container.innerHTML += `
+                    <div class="card">
+                        <div class="item-icon">${item.image}</div>
+                        <h3>${item.name}</h3>
+                        <p>Harga: Rp ${item.price.toLocaleString()}</p>
+                        <button onclick="alert('Fitur beli akan segera hadir!')">Beli Sekarang</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Fungsi Update UI Lelang
+        function updateAuctionUI(auction) {
+            document.getElementById('auction-name').innerText = auction.name;
+            document.getElementById('auction-img').innerText = auction.image;
+            document.getElementById('current-price').innerText = `Rp ${auction.currentBid.toLocaleString()}`;
+            document.getElementById('highest-bidder').innerText = auction.highestBidder;
+            currentAuctionPrice = auction.currentBid;
+        }
+
+        // Fungsi Kirim Bid
+        function placeBid() {
+            const input = document.getElementById('bid-input');
+            const amount = parseInt(input.value);
+            const username = prompt("Masukkan nama Anda untuk menawar:");
+
+            if (amount > currentAuctionPrice) {
+                socket.emit('place_bid', { amount: amount, user: username });
+                input.value = '';
+            } else {
+                alert("Tawaran harus lebih tinggi dari harga sekarang!");
+            }
+        }
+    </script>
+</body>
+</html>
