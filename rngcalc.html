@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish It - Secret Fish Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; }
+        .input-field { background-color: #0f172a; border: 1px solid #475569; color: white; }
+    </style>
+</head>
+<body class="p-6 flex flex-col items-center min-h-screen">
+
+    <div class="max-w-md w-full card rounded-xl shadow-2xl p-6">
+        <h1 class="text-2xl font-bold text-cyan-400 mb-2 text-center">🎣 Fish It RNG Tool</h1>
+        <p class="text-xs text-gray-400 text-center mb-6">Hitung peluang mendapatkan Secret Fish berdasarkan kondisi.</p>
+
+        <div class="space-y-4">
+            
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Kelangkaan Ikan (1 banding X)</label>
+                <input type="number" id="baseChance" placeholder="Contoh: 10000" class="input-field w-full p-2 rounded focus:outline-none focus:border-cyan-500 transition">
+                <p class="text-xs text-gray-500 mt-1">Cek Wiki Fish It untuk base chance ikan (misal: 1/10.000).</p>
+            </div>
+
+            <hr class="border-gray-700">
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Multiplier Cuaca & Waktu</label>
+                <select id="weatherMult" class="input-field w-full p-2 rounded mb-2">
+                    <option value="1">Normal / Clear (1x)</option>
+                    <option value="1.5">Rain (1.5x)</option>
+                    <option value="2">Fog (2x)</option>
+                    <option value="3">Aurora / Special Event (3x)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Multiplier Umpan (Bait)</label>
+                <select id="baitMult" class="input-field w-full p-2 rounded">
+                    <option value="1">No Bait / Worm (1x)</option>
+                    <option value="1.2">Shrimp (1.2x)</option>
+                    <option value="2.5">Truffle (2.5x)</option>
+                    <option value="5">Secret Bait (5x)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Equipment / Gamepass (Luck)</label>
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="luckPotion" value="1.5" class="w-4 h-4 accent-cyan-500">
+                    <label for="luckPotion" class="text-sm">Luck Potion (+50%)</label>
+                </div>
+                <div class="flex items-center space-x-2 mt-2">
+                    <input type="checkbox" id="vipPass" value="1.2" class="w-4 h-4 accent-cyan-500">
+                    <label for="vipPass" class="text-sm">VIP / Lucky Rod (+20%)</label>
+                </div>
+            </div>
+
+            <button onclick="calculateRNG()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 rounded transition mt-4">
+                Hitung Peluang!
+            </button>
+        </div>
+
+        <div id="resultBox" class="hidden mt-6 p-4 bg-slate-900 rounded border border-cyan-900/50">
+            <h3 class="text-lg font-bold text-gray-200">Hasil Kalkulasi:</h3>
+            <div class="mt-2 grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-xs text-gray-400">Total Multiplier</p>
+                    <p class="text-xl font-mono text-yellow-400" id="resMult">0x</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-400">Persentase (%)</p>
+                    <p class="text-xl font-mono text-green-400" id="resPercent">0%</p>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-800">
+                <p class="text-xs text-gray-400">Estimasi Rata-rata Cast:</p>
+                <p class="text-2xl font-bold text-white" id="resCasts">0</p>
+                <p class="text-xs text-gray-500 italic mt-1">*Ini hanya probabilitas, bukan jaminan.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateRNG() {
+            // Ambil nilai input
+            let base = parseFloat(document.getElementById('baseChance').value);
+            let weather = parseFloat(document.getElementById('weatherMult').value);
+            let bait = parseFloat(document.getElementById('baitMult').value);
+            
+            // Cek checkbox
+            let luckPotion = document.getElementById('luckPotion').checked ? 1.5 : 1;
+            let vipPass = document.getElementById('vipPass').checked ? 1.2 : 1;
+
+            if (!base || base <= 0) {
+                alert("Masukkan base rarity ikan (Contoh: 1000 untuk 1/1000)");
+                return;
+            }
+
+            // Rumus Kalkulasi
+            // Total Multiplier = Weather * Bait * Potion * VIP
+            let totalMultiplier = weather * bait * luckPotion * vipPass;
+
+            // Peluang Baru = Base Chance / Total Multiplier
+            // Contoh: 1/1000 dengan 2x luck = 1/500
+            let newChance = base / totalMultiplier;
+            
+            // Persentase
+            let percentage = (1 / newChance) * 100;
+
+            // Tampilkan Hasil
+            document.getElementById('resMult').innerText = totalMultiplier.toFixed(2) + "x";
+            document.getElementById('resPercent').innerText = percentage.toFixed(4) + "%";
+            document.getElementById('resCasts').innerText = "1 banding " + Math.ceil(newChance).toLocaleString();
+
+            document.getElementById('resultBox').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
